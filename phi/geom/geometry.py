@@ -2,6 +2,7 @@ import numpy as np
 
 from phi import struct
 from phi import math
+from phi.math.batched import BATCHED
 
 
 @struct.definition()
@@ -130,19 +131,19 @@ class AABoxGenerator(object):
 box = AABoxGenerator()
 
 
-@struct.definition()
+@struct.definition(BATCHED)
 class Sphere(Geometry):
 
     def __init__(self, center, radius, **kwargs):
         Geometry.__init__(self, **struct.kwargs(locals()))
 
-    @struct.constant()
+    @struct.constant(dims=0)
     def radius(self, radius):
-        return math.as_tensor(radius)
+        return radius
 
-    @struct.constant()
+    @struct.constant(dims=1)
     def center(self, center):
-        return math.as_tensor(center)
+        return center
 
     def value_at(self, location):
         center = math.batch_align(self.center, 1, location)
