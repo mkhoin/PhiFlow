@@ -5,11 +5,8 @@ from copy import copy
 import numpy as np
 import six
 
-from phi import math
-
-from .context import skip_validate, unsafe
+from .context import skip_validate, unsafe, context_item_condition
 from .structdef import CONSTANTS, VARIABLES, DATA, Item, derived
-from . import functions as structf
 
 
 def kwargs(locals, include_self=False, ignore=()):
@@ -60,13 +57,16 @@ Shapes of sub-structs are obtained using struct.shape while shapes of non-struct
 Struct subclasses can override this method e.g. to specify unknown dimensions (although the current data has a known dimension).
         :return: Invalid struct holding shapes instead of data
         """
+        from .functions import map
+        from phi import math
+
         def to_shape(obj):
             if isstruct(obj):
                 return obj.shape
             else:
                 return math.shape(obj)
         with unsafe():
-            result = structf.map(to_shape, self, item_condition=DATA)
+            result = map(to_shape, self, item_condition=context_item_condition)
         return result
 
     @derived()
@@ -77,13 +77,16 @@ Shapes of sub-structs are obtained using struct.staticshape while shapes of non-
 Struct subclasses can override this method e.g. to specify unknown dimensions (although the current data has a known dimension).
         :return: Invalid struct holding shapes instead of data
         """
+        from .functions import map
+        from phi import math
+
         def to_shape(obj):
             if isstruct(obj):
                 return obj.staticshape
             else:
                 return math.staticshape(obj)
         with unsafe():
-            result = structf.map(to_shape, self, item_condition=DATA)
+            result = map(to_shape, self, item_condition=context_item_condition)
         return result
 
     def copied_with(self, **kwargs):

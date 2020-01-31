@@ -4,15 +4,17 @@ from phi.physics.world import World
 from phi.physics import Physics
 from phi.physics.collective import CollectivePhysics
 from phi import math, struct
+from phi.struct import VARIABLES
 from phi.struct.functions import mappable
 from .util import placeholder
 
 
 def tf_bake_graph(world, session):
     # --- Build placeholder state ---
-    shape = world.state.shape
-    dtype = _32_bit(math.types(world.state))
-    state_in = placeholder(shape, dtype=dtype)
+    with struct.only(VARIABLES):
+        shape = world.state.shape
+        dtype = _32_bit(math.types(world.state))
+        state_in = placeholder(shape, dtype=dtype)
     dt = placeholder(())
     # --- Build graph ---
     state_out = world.physics.step(state_in, dt=dt)
@@ -29,8 +31,9 @@ def tf_bake_subgraph(tracker, session):
     tfworld.add(tracker.state)
     # --- Build placeholder state ---
     dtype = _32_bit(math.types(tracker.state))
-    shape = tracker.state.shape
-    state_in = placeholder(shape, dtype=dtype)
+    with struct.only(VARIABLES):
+        shape = tracker.state.shape
+        state_in = placeholder(shape, dtype=dtype)
     dt = placeholder(())
     # --- Build graph ---
     state_out = tracker.world.physics.substep(state_in, tracker.world.state, dt)
