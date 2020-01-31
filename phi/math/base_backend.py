@@ -420,12 +420,25 @@ class DynamicBackend(Backend):
         return self.choose_backend(a).expand_dims(a, axis, number)
 
     def shape(self, tensor):
+        """
+    Dynamic shape of a tensor; all dimensions are known.
+    Dimensions can be integers or backend-specific dimension representations.
+        :param tensor: tensor
+        :return: Backend-specific iterable shape object
+        :rtype: object
+        """
         return self.choose_backend(tensor).shape(tensor)
 
     def to_float(self, x, float64=False):
         return self.choose_backend(x).to_float(x, float64=float64)
 
     def staticshape(self, tensor):
+        """
+    Static shape of a tensor; some dimensions might be unknown but the number of dimensions is known.
+        :param tensor: tensor
+        :return: Tuple containing integers for known dimensions or None for unknown dimensions.
+        :rtype: tuple
+        """
         return self.choose_backend(tensor).staticshape(tensor)
 
     def to_int(self, x, int64=False):
