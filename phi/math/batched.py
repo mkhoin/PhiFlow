@@ -21,12 +21,3 @@ class Batched(Trait):
 
 
 BATCHED = Batched(keywords=['dims'])
-
-
-@definition(traits=[BATCHED])
-class BatchedStruct(Struct):
-
-    @constant()
-    def batch_size(self, batch_size):
-        assert isinstance(batch_size, int) or batch_size is None
-        return batch_size
